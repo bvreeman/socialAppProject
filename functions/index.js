@@ -1,7 +1,15 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 
-admin.initializeApp();
+// admin.initializeApp();
+
+var serviceAccount = require("path/to/serviceAccountKey.json");
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: "https://socialappproject-81412.firebaseio.com"
+});
+
 
 // Create and Deploy Your First Cloud Functions
 // https://firebase.google.com/docs/functions/write-firebase-functions
@@ -11,12 +19,15 @@ exports.helloWorld = functions.https.onRequest((request, response) => {
 });
 
 exports.getScreams = functions.https.onRequest((request, response) => {
-    admin.firestore().collection('screams').get()
+    admin
+        .firestore()
+        .collection('screams')
+        .get()
         .then((data) => {
             let screams = [];
             data.forEach((doc) => {
                 screams.push(doc.data());
-            })
+            });
             return response.json(screams);
         })
         .catch(err => console.error(err))
@@ -29,14 +40,15 @@ exports.createScream = functions.https.onRequest((request, response) => {
         createdAt: admin.firestore.Timestamp.fromDate(new Date())
     };
 
-    admin.firestore()
+    admin
+        .firestore()
         .collection('screams')
         .add(newScream)
-        .then(doc => {
+        .then((doc) => {
             response.json({ message: `document ${doc.id} created successfully`});
         })
-        .catch(err => {
+        .catch((err) => {
             response.status(500).json({ error: 'something went wrong'})
             console.error(err)
-        })
+        });
 });
