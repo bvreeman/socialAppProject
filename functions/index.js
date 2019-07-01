@@ -2,6 +2,17 @@ const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 const express = require('express')
 const app = express();
+require('dotenv').config();
+
+const config = {
+    apiKey: process.env.DB_APIKEY,
+    authDomain: process.env.DB_AUTHDOMAIN,
+    databaseURL: process.env.DB_DATABASEURL,
+    projectId: process.env.DB_PROJECTID,
+    storageBucket: process.env.DB_STORAGEBUCKET,
+    messagingSenderId: process.env.DB_MESSAGINGSENDERID,
+    appId: process.env.DB_APPID
+}
 
 var serviceAccount = require("./key/socialappproject-81412-firebase-adminsdk-liuug-5696bb4daf.json");
 
