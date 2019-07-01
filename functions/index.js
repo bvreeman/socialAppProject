@@ -10,6 +10,9 @@ admin.initializeApp({
   databaseURL: "https://socialappproject-81412.firebaseio.com"
 });
 
+const firebase = require('firebase')
+firebase.initializeApp(config);
+
 app.get('/screams', (req, res) => {
     admin
     .firestore()
