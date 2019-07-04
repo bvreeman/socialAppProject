@@ -1,7 +1,6 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
-const express = require('express')
-const app = express();
+const app = require('express')();
 require('dotenv').config();
 
 const config = {
@@ -14,15 +13,15 @@ const config = {
     appId: process.env.DB_APPID
 }
 
+const firebase = require('firebase')
+firebase.initializeApp(config);
+
 var serviceAccount = require("./key/socialappproject-81412-firebase-adminsdk-liuug-5696bb4daf.json");
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   databaseURL: "https://socialappproject-81412.firebaseio.com"
 });
-
-const firebase = require('firebase')
-firebase.initializeApp(config);
 
 app.get('/screams', (req, res) => {
     admin
@@ -64,5 +63,29 @@ app.post('/scream', (req, res) => {
             console.error(err)
         });
 });
+
+// Signup Route
+app.post('/signup', (req, res) => {
+    const newUser = {
+        email: req.body.email,
+        password: req.body.password,
+        confirmPassword: req.body.confirmPassword,
+        handle: req.body.handle,
+        
+    }
+
+    // TODO Validate Data
+
+    firebase
+        .auth()
+        .createUserWithEmailAndPassword(newUser.email, newUser.password)
+        .then((data) => {
+            return res.status(201).json({ message: `user ${data.user.uid} signed up successfully`})
+        })
+        .catch((err) => {
+            console.error(err);
+            return res.status(500).json({ error: err.code })
+        })
+})
 
 exports.api = functions.https.onRequest(app);
